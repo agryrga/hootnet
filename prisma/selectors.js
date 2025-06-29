@@ -5,10 +5,6 @@ export const userBaseSelect = {
   name: true,
   avatarUrl: true,
   bio: true,
-}
-
-export const userProfileSelect = {
-  ...userBaseSelect,
   posts: { select: { id: true } },
   subscriptions: { select: { id: true } },
   likes: true,

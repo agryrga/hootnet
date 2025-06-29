@@ -1,5 +1,5 @@
 import prisma from '../../prisma/client.js'
-import { userBaseSelect, userProfileSelect } from '../../prisma/selectors.js'
+import { userBaseSelect } from '../../prisma/selectors.js'
 
 export const findUserById = async (userId) => {
   const user = await prisma.user.findUnique({
@@ -24,7 +24,7 @@ export const updateUserProfile = async (userId, data) => {
       avatarUrl: data.avatarUrl,
       bio: data.bio,
     },
-    select: userProfileSelect,
+    select: userBaseSelect,
   })
 
   return updated
