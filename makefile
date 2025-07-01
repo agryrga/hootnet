@@ -20,3 +20,5 @@ logs:
 migrate:
 	docker compose run --rm migrate npx prisma migrate dev --name init
 
+generate:
+	docker compose run --rm migrate npx prisma generate

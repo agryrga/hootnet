@@ -4,7 +4,7 @@ export const getUserById = async (req, res) => {
   const { userId } = req.params
 
   const user = await findUserById(userId)
-  if (!user) return res.status(404).json({ error: 'User not found' })
+  if (!user) return res.status(404).json({ error: 'Пользователь не найден' })
 
   res.json(user)
 }
@@ -14,7 +14,7 @@ export const updateUser = async (req, res) => {
   const { nickname, name, avatarUrl, bio } = req.body
 
   if (Number(userId) !== req.user.id)
-    return res.status(403).json({ error: 'Unauthorized' })
+    return res.status(403).json({ error: 'Недостаточно прав' })
 
   const updated = await updateUserProfile(userId, {
     nickname,
