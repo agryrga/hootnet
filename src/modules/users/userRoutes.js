@@ -1,6 +1,6 @@
 import express from 'express'
-import { getUserById, updateUser } from '../controllers/userController.js'
-import { authenticateToken } from '../middleware/auth.js'
+import { getUserById, updateUser } from './userController.js'
+import { authenticateToken } from '../../shared/middleware/auth.js'
 
 const router = express.Router()
 

@@ -1,17 +1,15 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import prisma from '../../prisma/client.js'
+import prisma from '../../../prisma/client.js'
 
-export const register = async (req, res) => {
-  const { email, password } = req.body
-
+export const registerUser = async ({ email, password }) => {
   if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password required' })
+    throw new Error('Email and password required')
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } })
   if (existingUser) {
-    return res.status(400).json({ error: 'Email already in use' })
+    throw new Error('Email already in use')
   }
 
   const hashedPassword = await bcrypt.hash(password, 10)
@@ -21,20 +19,18 @@ export const register = async (req, res) => {
     select: { id: true, email: true },
   })
 
-  res.json(user)
+  return user
 }
 
-export const login = async (req, res) => {
-  const { email, password } = req.body
-
+export const loginUser = async ({ email, password }) => {
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) {
-    return res.status(400).json({ error: 'Invalid credentials' })
+    throw new Error('Invalid credentials')
   }
 
   const valid = await bcrypt.compare(password, user.password)
   if (!valid) {
-    return res.status(400).json({ error: 'Invalid credentials' })
+    throw new Error('Invalid credentials')
   }
 
   const token = jwt.sign(
@@ -43,8 +39,8 @@ export const login = async (req, res) => {
     { expiresIn: '7d' }
   )
 
-  res.json({
+  return {
     token,
     user: { id: user.id, email: user.email, nickname: user.nickname },
-  })
+  }
 }

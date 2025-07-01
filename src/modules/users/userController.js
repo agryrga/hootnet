@@ -1,4 +1,4 @@
-import { findUserById, updateUserProfile } from '../services/userService.js'
+import { findUserById, updateUserProfile } from './userService.js'
 
 export const getUserById = async (req, res) => {
   const { userId } = req.params

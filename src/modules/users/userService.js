@@ -1,5 +1,5 @@
-import prisma from '../../prisma/client.js'
-import { userBaseSelect } from '../../prisma/selectors.js'
+import prisma from '../../../prisma/client.js'
+import { userBaseSelect } from '../../../prisma/selectors.js'
 
 export const findUserById = async (userId) => {
   const user = await prisma.user.findUnique({

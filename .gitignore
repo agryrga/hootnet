@@ -15,6 +15,5 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Результаты сборки (если есть)
 dist/
 build/
