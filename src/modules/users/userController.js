@@ -1,27 +1,23 @@
-import { findUserById, updateUserProfile } from './userService.js'
+import { findUserById, getAllUsers } from './userService.js'
+import { parseId } from '../../shared/utils/index.js'
 
 export const getUserById = async (req, res) => {
-  const { userId } = req.params
+  try {
+    const userId = parseId(req.params.userId, 'ID пользователя')
 
-  const user = await findUserById(userId)
-  if (!user) return res.status(404).json({ error: 'Пользователь не найден' })
+    const user = await findUserById(userId)
 
-  res.json(user)
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(400).json({ error: error.message })
+  }
 }
 
-export const updateUser = async (req, res) => {
-  const { userId } = req.params
-  const { nickname, name, avatarUrl, bio } = req.body
-
-  if (Number(userId) !== req.user.id)
-    return res.status(403).json({ error: 'Недостаточно прав' })
-
-  const updated = await updateUserProfile(userId, {
-    nickname,
-    name,
-    avatarUrl,
-    bio,
-  })
-
-  res.json(updated)
+export const listUsers = async (req, res) => {
+  try {
+    const users = await getAllUsers(req.user.id)
+    return res.status(200).json(users)
+  } catch (error) {
+    return res.status(500).json({ error: 'Что-то пошло не так' })
+  }
 }

@@ -2,30 +2,34 @@ import prisma from '../../../prisma/client.js'
 import { userBaseSelect } from '../../../prisma/selectors.js'
 
 export const findUserById = async (userId) => {
+  if (!userId || isNaN(userId)) {
+    throw new Error('Некорректный ID пользователя')
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: Number(userId) },
-    select: userBaseSelect,
+    select: {
+      ...userBaseSelect,
+      posts: { select: { id: true } },
+    },
   })
 
-  if (!user) return null
+  if (!user) {
+    throw new Error('Пользователь не найден')
+  }
 
   return {
     ...user,
-    postsCount: user.posts.length,
+    postsCount: user.posts?.length ?? 0,
   }
 }
 
-export const updateUserProfile = async (userId, data) => {
-  const updated = await prisma.user.update({
-    where: { id: Number(userId) },
-    data: {
-      nickname: data.nickname,
-      name: data.name,
-      avatarUrl: data.avatarUrl,
-      bio: data.bio,
+export const getAllUsers = async (currentUserId) => {
+  return prisma.user.findMany({
+    where: {
+      isBanned: false,
+      ...(currentUserId ? { NOT: { id: Number(currentUserId) } } : {}),
     },
     select: userBaseSelect,
   })
-
-  return updated
 }

@@ -3,20 +3,24 @@ import jwt from 'jsonwebtoken'
 import prisma from '../../../prisma/client.js'
 
 export const registerUser = async ({ email, password }) => {
-  if (!email || !password) {
-    throw new Error('Email and password required')
-  }
-
   const existingUser = await prisma.user.findUnique({ where: { email } })
   if (existingUser) {
-    throw new Error('Email already in use')
+    throw new Error('Email уже используется')
   }
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const user = await prisma.user.create({
-    data: { email, password: hashedPassword, nickname: email },
-    select: { id: true, email: true },
+    data: {
+      email,
+      password: hashedPassword,
+      nickname: email,
+    },
+    select: {
+      id: true,
+      email: true,
+      nickname: true,
+    },
   })
 
   return user
@@ -25,22 +29,29 @@ export const registerUser = async ({ email, password }) => {
 export const loginUser = async ({ email, password }) => {
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) {
-    throw new Error('Invalid credentials')
+    throw new Error('Неверные учетные данные')
   }
 
-  const valid = await bcrypt.compare(password, user.password)
-  if (!valid) {
-    throw new Error('Invalid credentials')
+  const isPasswordValid = await bcrypt.compare(password, user.password)
+  if (!isPasswordValid) {
+    throw new Error('Неверные учетные данные')
   }
 
   const token = jwt.sign(
-    { id: user.id, email: user.email },
+    {
+      id: user.id,
+      email: user.email,
+    },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   )
 
   return {
     token,
-    user: { id: user.id, email: user.email, nickname: user.nickname },
+    user: {
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
+    },
   }
 }
