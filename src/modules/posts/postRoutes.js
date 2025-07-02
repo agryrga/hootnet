@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.post('/', authenticateToken, createNewPost)
 router.get('/', listPosts)
-router.get('/:postId', getPost)
 router.get('/user/:userId', listPostsByUser)
+router.get('/:postId', getPost)
 
 export default router

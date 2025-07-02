@@ -7,6 +7,6 @@ export const userBaseSelect = {
   bio: true,
   posts: { select: { id: true } },
   subscriptions: { select: { id: true } },
-  likes: true,
-  dislikes: true,
+  likes: { select: { id: true } },
+  dislikes: { select: { id: true } },
 }
